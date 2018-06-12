@@ -63,3 +63,8 @@ variable "content_based_deduplication" {
   description = "Enables content-based deduplication for FIFO queues"
   default     = false
 }
+
+variable "kms_alias" {
+  description = "KMS key alias name for SQS"
+  default     = ""
+}
