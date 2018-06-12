@@ -1,34 +1,34 @@
 /**
 * Module usage:
-*
-*    module "sqs" {
-*      source               = "git::https://github.com/UKHomeOffice/acp-tf-sqs?ref=master"
-*      name                 = "new-sqs"
-*      environment          = "env"
-*      sqs_iam_user         = "new-sqs-user"
-*      iam_user_policy_name = "new-sqs-policy"
-*
-*      policy = <<POLICY
-*    {
-*      "Version": "2012-10-17",
-*      "Id": "sqspolicy",
-*      "Statement": [
-*        {
-*          "Sid": "First",
-*          "Effect": "Allow",
-*          "Principal": "*",
-*          "Action": "sqs:SendMessage",
-*          "Resource": "arn:aws:sqs:*:*:new-sqs",
-*          "Condition": {
-*            "ArnEquals": {
-*              "aws:SourceArn": "arn:aws:sqs:*:*:new-sqs"
+* 
+*      module "sqs" {
+*        source               = "git::https://github.com/UKHomeOffice/acp-tf-sqs?ref=master"
+*        name                 = "new-sqs"
+*        environment          = "env"
+*        sqs_iam_user         = "new-sqs-user"
+*        iam_user_policy_name = "new-sqs-policy"
+* 
+*        policy = <<POLICY
+*      {
+*        "Version": "2012-10-17",
+*        "Id": "sqspolicy",
+*        "Statement": [
+*          {
+*            "Sid": "First",
+*            "Effect": "Allow",
+*            "Principal": "*",
+*            "Action": "sqs:SendMessage",
+*            "Resource": "arn:aws:sqs:*:*:new-sqs",
+*            "Condition": {
+*              "ArnEquals": {
+*                "aws:SourceArn": "arn:aws:sqs:*:*:new-sqs"
+*              }
 *            }
 *          }
-*        }
-*      ]
-*    }
-*    POLICY
-*    }
+*        ]
+*      }
+*      POLICY
+*      }
 */
 
 data "aws_caller_identity" "current" {}
