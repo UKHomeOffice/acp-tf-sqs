@@ -68,3 +68,18 @@ variable "kms_alias" {
   description = "KMS key alias name for SQS"
   default     = ""
 }
+
+variable "kms_key" {
+  description = "KMS key id name for SQS"
+  default     = ""
+}
+
+variable "redrive_arn" {
+  description = "AWS ARN for the SQS redirect queue"
+  default     = ""
+}
+
+variable "max_receive_count" {
+  description = "The max receive count for a queue before Amazon SQS moves the message to a dead-letter queue"
+  default     = "10"
+}
