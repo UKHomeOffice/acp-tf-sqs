@@ -249,7 +249,16 @@ data "aws_iam_policy_document" "sqs_policy_document" {
     ]
 
     actions = [
-      "sqs:*",
+      "sqs:AddPermission",
+      "sqs:ChangeMessageVisibility*",
+      "sqs:DeleteMessage*",
+      "sqs:Get*",
+      "sqs:List*",
+      "sqs:PurgeQueue",
+      "sqs:ReceiveMessage",
+      "sqs:RemovePermission",
+      "sqs:Send*",
+      "sqs:SetQueueAttributes"
     ]
   }
 }
@@ -267,7 +276,16 @@ data "aws_iam_policy_document" "sqs_with_kms_policy_document" {
     ]
 
     actions = [
-      "sqs:*",
+      "sqs:AddPermission",
+      "sqs:ChangeMessageVisibility*",
+      "sqs:DeleteMessage*",
+      "sqs:Get*",
+      "sqs:List*",
+      "sqs:PurgeQueue",
+      "sqs:ReceiveMessage",
+      "sqs:RemovePermission",
+      "sqs:Send*",
+      "sqs:SetQueueAttributes"
     ]
   }
 
@@ -308,7 +326,16 @@ data "aws_iam_policy_document" "sqs_with_redrive_policy_document" {
     ]
 
     actions = [
-      "sqs:*",
+      "sqs:AddPermission",
+      "sqs:ChangeMessageVisibility*",
+      "sqs:DeleteMessage*",
+      "sqs:Get*",
+      "sqs:List*",
+      "sqs:PurgeQueue",
+      "sqs:ReceiveMessage",
+      "sqs:RemovePermission",
+      "sqs:Send*",
+      "sqs:SetQueueAttributes"
     ]
   }
 }
@@ -327,7 +354,16 @@ data "aws_iam_policy_document" "sqs_with_kms_and_redrive_policy_document" {
     ]
 
     actions = [
-      "sqs:*",
+      "sqs:AddPermission",
+      "sqs:ChangeMessageVisibility*",
+      "sqs:DeleteMessage*",
+      "sqs:Get*",
+      "sqs:List*",
+      "sqs:PurgeQueue",
+      "sqs:ReceiveMessage",
+      "sqs:RemovePermission",
+      "sqs:Send*",
+      "sqs:SetQueueAttributes"
     ]
   }
 
