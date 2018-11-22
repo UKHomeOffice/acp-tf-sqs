@@ -189,7 +189,7 @@ resource "aws_sqs_queue" "queue_with_kms_and_redrive_and_no_policy" {
   tags = "${merge(var.tags, map("Name", format("%s-%s", var.environment, var.name)), map("Env", var.environment), map("KubernetesCluster", var.environment))}"
 }
 
-resource "aws_sqs_queue" "queue_with_kms_key_and_redrive_and_no_policy" {
+resource "aws_sqs_queue" "queue_with_kms_key_and_no_policy" {
   count = "${length(var.kms_key) != 0 && length(var.policy) == 0 ? 1 : 0}"
   name  = "${var.name}"
 
@@ -202,7 +202,6 @@ resource "aws_sqs_queue" "queue_with_kms_key_and_redrive_and_no_policy" {
   content_based_deduplication       = "${var.content_based_deduplication}"
   kms_master_key_id                 = "${var.kms_key}"
   kms_data_key_reuse_period_seconds = 300
-  redrive_policy                    = "{\"deadLetterTargetArn\":\"${var.redrive_arn}\",\"maxReceiveCount\":${var.max_receive_count}}"
 
   tags = "${merge(var.tags, map("Name", format("%s-%s", var.environment, var.name)), map("Env", var.environment), map("KubernetesCluster", var.environment))}"
 }
