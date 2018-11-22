@@ -86,7 +86,7 @@ resource "aws_sqs_queue" "queue_with_kms" {
 }
 
 resource "aws_sqs_queue" "queue_with_no_policy" {
-  count = "${length(var.kms_alias) == 0 && length(var.redrive_arn) == 0 && length(var.policy) == 0 ? 1 : 0}"
+  count = "${length(var.kms_alias) == 0 && length(var.kms_key) == 0 && length(var.redrive_arn) == 0 && length(var.policy) == 0 ? 1 : 0}"
   name  = "${var.name}"
 
   visibility_timeout_seconds        = "${var.visibility_timeout_seconds}"
@@ -96,6 +96,23 @@ resource "aws_sqs_queue" "queue_with_no_policy" {
   receive_wait_time_seconds         = "${var.receive_wait_time_seconds}"
   fifo_queue                        = "${var.fifo_queue}"
   content_based_deduplication       = "${var.content_based_deduplication}"
+  kms_data_key_reuse_period_seconds = 300
+
+  tags = "${merge(var.tags, map("Name", format("%s-%s", var.environment, var.name)), map("Env", var.environment), map("KubernetesCluster", var.environment))}"
+}
+
+resource "aws_sqs_queue" "queue_with_kms_key_and_no_policy" {
+  count = "${length(var.kms_alias) == 0 && length(var.kms_key) != 0 && length(var.policy) == 0 ? 1 : 0}"
+  name  = "${var.name}"
+
+  visibility_timeout_seconds        = "${var.visibility_timeout_seconds}"
+  message_retention_seconds         = "${var.message_retention_seconds}"
+  max_message_size                  = "${var.max_message_size}"
+  delay_seconds                     = "${var.delay_seconds}"
+  receive_wait_time_seconds         = "${var.receive_wait_time_seconds}"
+  fifo_queue                        = "${var.fifo_queue}"
+  content_based_deduplication       = "${var.content_based_deduplication}"
+  kms_master_key_id                 = "${var.kms_key}"
   kms_data_key_reuse_period_seconds = 300
 
   tags = "${merge(var.tags, map("Name", format("%s-%s", var.environment, var.name)), map("Env", var.environment), map("KubernetesCluster", var.environment))}"
@@ -185,23 +202,7 @@ resource "aws_sqs_queue" "queue_with_kms_and_redrive_and_no_policy" {
   content_based_deduplication       = "${var.content_based_deduplication}"
   kms_master_key_id                 = "${aws_kms_key.sqs_kms_key.key_id}"
   kms_data_key_reuse_period_seconds = 300
-
-  tags = "${merge(var.tags, map("Name", format("%s-%s", var.environment, var.name)), map("Env", var.environment), map("KubernetesCluster", var.environment))}"
-}
-
-resource "aws_sqs_queue" "queue_with_kms_key_and_no_policy" {
-  count = "${length(var.kms_key) != 0 && length(var.policy) == 0 ? 1 : 0}"
-  name  = "${var.name}"
-
-  visibility_timeout_seconds        = "${var.visibility_timeout_seconds}"
-  message_retention_seconds         = "${var.message_retention_seconds}"
-  max_message_size                  = "${var.max_message_size}"
-  delay_seconds                     = "${var.delay_seconds}"
-  receive_wait_time_seconds         = "${var.receive_wait_time_seconds}"
-  fifo_queue                        = "${var.fifo_queue}"
-  content_based_deduplication       = "${var.content_based_deduplication}"
-  kms_master_key_id                 = "${var.kms_key}"
-  kms_data_key_reuse_period_seconds = 300
+  redrive_policy                    = "{\"deadLetterTargetArn\":\"${var.redrive_arn}\",\"maxReceiveCount\":${var.max_receive_count}}"
 
   tags = "${merge(var.tags, map("Name", format("%s-%s", var.environment, var.name)), map("Env", var.environment), map("KubernetesCluster", var.environment))}"
 }
