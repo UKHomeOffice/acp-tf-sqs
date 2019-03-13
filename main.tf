@@ -207,8 +207,7 @@ resource "aws_sqs_queue" "queue_with_kms_and_redrive_and_no_policy" {
   tags = "${merge(var.tags, map("Name", format("%s-%s", var.environment, var.name)), map("Env", var.environment), map("KubernetesCluster", var.environment))}"
 }
 
-
-resource "aws_iam_user" "sqs_with_kms_iam_user" {
+resource "aws_iam_user" "sqs_iam_user" {
   count = "${length(var.policy) != 0 ? var.number_of_users : 0}"
 
   name = "${var.sqs_iam_user}${var.number_of_users != 1 ? "-${count.index}" : "" }"
@@ -219,7 +218,7 @@ resource "aws_iam_user_policy" "sqs_user_policy" {
   count = "${length(var.kms_alias) == 0 && length(var.redrive_arn) == 0 && length(var.policy) != 0 ? var.number_of_users : 0}"
 
   name   = "${var.iam_user_policy_name}SQSPolicy"
-  user   = "${element(aws_iam_user.sqs_with_kms_iam_user.*.name, count.index)}"
+  user   = "${element(aws_iam_user.sqs_iam_user.*.name, count.index)}"
   policy = "${data.aws_iam_policy_document.sqs_policy_document.json}"
 }
 
@@ -227,7 +226,7 @@ resource "aws_iam_user_policy" "sqs_with_kms_user_policy" {
   count = "${length(var.kms_alias) != 0 && length(var.redrive_arn) == 0 && length(var.policy) != 0 ? var.number_of_users : 0 }"
 
   name   = "${var.iam_user_policy_name}SQSPolicy"
-  user   = "${element(aws_iam_user.sqs_with_kms_iam_user.*.name, count.index)}"
+  user   = "${element(aws_iam_user.sqs_iam_user.*.name, count.index)}"
   policy = "${data.aws_iam_policy_document.sqs_with_kms_policy_document.json}"
 }
 
@@ -235,7 +234,7 @@ resource "aws_iam_user_policy" "sqs_with_redrive_user_policy" {
   count = "${length(var.kms_alias) == 0 && length(var.redrive_arn) != 0 && length(var.policy) != 0 ? var.number_of_users : 0}"
 
   name   = "${var.iam_user_policy_name}SQSPolicy"
-  user   = "${element(aws_iam_user.sqs_with_kms_iam_user.*.name, count.index)}"
+  user   = "${element(aws_iam_user.sqs_iam_user.*.name, count.index)}"
   policy = "${data.aws_iam_policy_document.sqs_with_redrive_policy_document.json}"
 }
 
@@ -243,7 +242,7 @@ resource "aws_iam_user_policy" "sqs_with_kms_and_redrive_user_policy" {
   count = "${length(var.kms_alias) != 0 && length(var.redrive_arn) != 0 && length(var.policy) != 0 ? var.number_of_users : 0 }"
 
   name   = "${var.iam_user_policy_name}SQSPolicy"
-  user   = "${element(aws_iam_user.sqs_with_kms_iam_user.*.name, count.index)}"
+  user   = "${element(aws_iam_user.sqs_iam_user.*.name, count.index)}"
   policy = "${data.aws_iam_policy_document.sqs_with_kms_and_redrive_policy_document.json}"
 }
 

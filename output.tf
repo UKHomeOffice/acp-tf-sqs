@@ -83,7 +83,7 @@ output "sqs_arn_kms_and_redrive_and_no_policy" {
   value       = "${element(concat(aws_sqs_queue.queue_with_kms_and_redrive_and_no_policy.*.arn, list("")), 0)}"
 }
 
-output "sqs_with_kms_iam_user" {
+output "sqs_iam_user" {
   description = "The SQS user ARN we just created"
-  value       = "${element(concat(aws_sqs_queue.sqs_with_kms_iam_user.*.arn, list("")), 0)}"
+  value       = "${element(concat(aws_iam_user.sqs_iam_user.*.arn, list("")), 0)}"
 }
