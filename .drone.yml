@@ -1,9 +1,7 @@
 pipeline:
   validate:
-    image: quay.io/ukhomeofficedigital/acp-toolset:v0.0.11
-    pull: true
+    image: quay.io/ukhomeofficedigital/terraform-toolset:v0.12.6
     commands:
-    - if [ ! -z "$(terraform fmt)" ]; then echo "the above files have formatting error, please run a 'terraform fmt'"; fi
-    - if [ ! -z "$(terraform validate -check-variables=false)" ]; then echo "the above files have formatting error, please run a 'terraform fmt'"; fi
+    - /acp/scripts/tf-validate.sh --no-docs
     when:
       event: pull_request
