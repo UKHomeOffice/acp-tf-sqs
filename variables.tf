@@ -83,3 +83,4 @@ variable "max_receive_count" {
   description = "The max receive count for a queue before Amazon SQS moves the message to a dead-letter queue"
   default     = "10"
 }
+
