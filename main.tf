@@ -46,6 +46,7 @@ resource "aws_kms_key" "sqs_kms_key" {
   deletion_window_in_days = 7
   is_enabled              = "true"
   enable_key_rotation     = "true"
+  policy                  = var.kms_key_policy != "" ? var.kms_key_policy : null
 }
 
 resource "aws_kms_alias" "s3_bucket_kms_alias" {

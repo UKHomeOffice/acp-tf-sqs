@@ -84,3 +84,7 @@ variable "max_receive_count" {
   default     = "10"
 }
 
+variable "kms_key_policy" {
+  description = "KMS key policy (uses a default policy if omitted)"
+  default     = ""
+}

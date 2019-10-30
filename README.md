@@ -41,6 +41,7 @@ Module usage:
 | iam_user_policy_name | The policy name of attached to the user | string | - | yes |
 | kms_alias | KMS key alias name for SQS | string | `` | no |
 | kms_key | KMS key id name for SQS | string | `` | no |
+| kms_key_policy | KMS key policy (uses a default policy if omitted) | string | `` | no |
 | max_message_size | The limit of how many bytes a message can contain before Amazon SQS rejects it. An integer from 1024 bytes (1 KiB) up to 262144 bytes (256 KiB) | string | `262144` | no |
 | max_receive_count | The max receive count for a queue before Amazon SQS moves the message to a dead-letter queue | string | `10` | no |
 | message_retention_seconds | The number of seconds Amazon SQS retains a message. Integer representing seconds, from 60 (1 minute) to 1209600 (14 days) | string | `345600` | no |
@@ -74,4 +75,3 @@ Module usage:
 | sqs_id_no_policy | The SQS KMS Queue ID we just created |
 | sqs_id_redrive | The SQS KMS Queue ID we just created |
 | sqs_id_redrive_and_no_policy | The SQS KMS Queue ID we just created |
-
