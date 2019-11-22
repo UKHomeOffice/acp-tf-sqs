@@ -88,3 +88,8 @@ variable "kms_key_policy" {
   description = "KMS key policy (uses a default policy if omitted)"
   default     = ""
 }
+
+variable "enable_set_attributes" {
+  description = "Should the created iam user be permitted to set queue attributes"
+  default     = true
+}
