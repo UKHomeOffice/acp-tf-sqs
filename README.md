@@ -36,6 +36,7 @@ Module usage:
 |------|-------------|:----:|:-----:|:-----:|
 | content_based_deduplication | Enables content-based deduplication for FIFO queues | string | `false` | no |
 | delay_seconds | The time in seconds that the delivery of all messages in the queue will be delayed. An integer from 0 to 900 (15 minutes) | string | `0` | no |
+| enable_set_attributes | Should the created iam user be permitted to set queue attributes | string | `true` | no |
 | environment | The environment the SQS is running in i.e. dev, prod etc | string | - | yes |
 | fifo_queue | Boolean designating a FIFO queue | string | `false` | no |
 | iam_user_policy_name | The policy name of attached to the user | string | - | yes |

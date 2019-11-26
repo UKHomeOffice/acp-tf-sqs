@@ -370,7 +370,7 @@ data "aws_iam_policy_document" "sqs_policy_document" {
       aws_sqs_queue.queue[0].arn,
     ]
 
-    actions = [
+    actions = concat([
       "sqs:AddPermission",
       "sqs:ChangeMessageVisibility*",
       "sqs:DeleteMessage*",
@@ -380,8 +380,7 @@ data "aws_iam_policy_document" "sqs_policy_document" {
       "sqs:ReceiveMessage",
       "sqs:RemovePermission",
       "sqs:Send*",
-      "sqs:SetQueueAttributes",
-    ]
+    ], var.enable_set_attributes ? ["sqs:SetQueueAttributes"] : [])
   }
 }
 
@@ -397,7 +396,7 @@ data "aws_iam_policy_document" "sqs_with_kms_policy_document" {
       aws_sqs_queue.queue_with_kms[0].arn,
     ]
 
-    actions = [
+    actions = concat([
       "sqs:AddPermission",
       "sqs:ChangeMessageVisibility*",
       "sqs:DeleteMessage*",
@@ -407,8 +406,7 @@ data "aws_iam_policy_document" "sqs_with_kms_policy_document" {
       "sqs:ReceiveMessage",
       "sqs:RemovePermission",
       "sqs:Send*",
-      "sqs:SetQueueAttributes",
-    ]
+    ], var.enable_set_attributes ? ["sqs:SetQueueAttributes"] : [])
   }
 
   statement {
@@ -447,7 +445,7 @@ data "aws_iam_policy_document" "sqs_with_redrive_policy_document" {
       aws_sqs_queue.queue_with_redrive[0].arn,
     ]
 
-    actions = [
+    actions = concat([
       "sqs:AddPermission",
       "sqs:ChangeMessageVisibility*",
       "sqs:DeleteMessage*",
@@ -457,8 +455,7 @@ data "aws_iam_policy_document" "sqs_with_redrive_policy_document" {
       "sqs:ReceiveMessage",
       "sqs:RemovePermission",
       "sqs:Send*",
-      "sqs:SetQueueAttributes",
-    ]
+    ], var.enable_set_attributes ? ["sqs:SetQueueAttributes"] : [])
   }
 }
 
@@ -475,7 +472,7 @@ data "aws_iam_policy_document" "sqs_with_kms_and_redrive_policy_document" {
       aws_sqs_queue.queue_with_kms_and_redrive[0].arn,
     ]
 
-    actions = [
+    actions = concat([
       "sqs:AddPermission",
       "sqs:ChangeMessageVisibility*",
       "sqs:DeleteMessage*",
@@ -485,8 +482,7 @@ data "aws_iam_policy_document" "sqs_with_kms_and_redrive_policy_document" {
       "sqs:ReceiveMessage",
       "sqs:RemovePermission",
       "sqs:Send*",
-      "sqs:SetQueueAttributes",
-    ]
+    ], var.enable_set_attributes ? ["sqs:SetQueueAttributes"] : [])
   }
 
   statement {
