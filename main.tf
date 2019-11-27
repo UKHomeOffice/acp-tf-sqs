@@ -41,7 +41,7 @@ data "aws_region" "current" {
 }
 
 resource "aws_kms_key" "sqs_kms_key" {
-  count = length(var.kms_alias) != 0 && (length(var.policy) == 0 || length(var.redrive_arn) == 0) ? 1 : 0
+  count = var.kms_alias != "" && (var.policy == "" || var.redrive_arn == "") ? 1 : 0
 
   deletion_window_in_days = 7
   is_enabled              = "true"
