@@ -63,7 +63,6 @@ resource "aws_sqs_queue" "queue" {
   visibility_timeout_seconds        = var.visibility_timeout_seconds
   message_retention_seconds         = var.message_retention_seconds
   max_message_size                  = var.max_message_size
-  policy                            = var.policy
   delay_seconds                     = var.delay_seconds
   receive_wait_time_seconds         = var.receive_wait_time_seconds
   fifo_queue                        = var.fifo_queue
@@ -91,7 +90,6 @@ resource "aws_sqs_queue" "queue_with_kms" {
   visibility_timeout_seconds        = var.visibility_timeout_seconds
   message_retention_seconds         = var.message_retention_seconds
   max_message_size                  = var.max_message_size
-  policy                            = var.policy
   delay_seconds                     = var.delay_seconds
   receive_wait_time_seconds         = var.receive_wait_time_seconds
   fifo_queue                        = var.fifo_queue
@@ -203,7 +201,6 @@ resource "aws_sqs_queue" "queue_with_redrive" {
   visibility_timeout_seconds        = var.visibility_timeout_seconds
   message_retention_seconds         = var.message_retention_seconds
   max_message_size                  = var.max_message_size
-  policy                            = var.policy
   delay_seconds                     = var.delay_seconds
   receive_wait_time_seconds         = var.receive_wait_time_seconds
   fifo_queue                        = var.fifo_queue
@@ -232,7 +229,6 @@ resource "aws_sqs_queue" "queue_with_kms_and_redrive" {
   visibility_timeout_seconds        = var.visibility_timeout_seconds
   message_retention_seconds         = var.message_retention_seconds
   max_message_size                  = var.max_message_size
-  policy                            = var.policy
   delay_seconds                     = var.delay_seconds
   receive_wait_time_seconds         = var.receive_wait_time_seconds
   fifo_queue                        = var.fifo_queue
@@ -505,6 +501,128 @@ data "aws_iam_policy_document" "sqs_with_kms_and_redrive_policy_document" {
       "kms:Encrypt",
       "kms:DescribeKey",
       "kms:Decrypt",
+    ]
+  }
+}
+
+resource "aws_sqs_queue_policy" "sqs_default_policy" {
+  queue_url = "${aws_sqs_queue.queue[0].id}"
+  policy    = var.policy != "default" ? var.policy : data.aws_iam_policy_document.sqs_default_policy_document.json
+}
+
+data "aws_iam_policy_document" "sqs_default_policy_document" {
+  version = "2012-10-17"
+  statement {
+    sid    = "SQS Permissions"
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+    actions = [
+      "sqs:AddPermission",
+      "sqs:ChangeMessageVisibility*",
+      "sqs:DeleteMessage*",
+      "sqs:Get*",
+      "sqs:List*",
+      "sqs:PurgeQueue",
+      "sqs:ReceiveMessage",
+      "sqs:RemovePermission",
+      "sqs:Send*",
+    ]
+    resources = ["${aws_sqs_queue.queue[0].arn}"]
+  }
+}
+
+resource "aws_sqs_queue_policy" "sqs_with_kms_policy" {
+  queue_url = "${aws_sqs_queue.queue_with_kms[0].id}"
+  policy    = var.policy != "default" ? var.policy : data.aws_iam_policy_document.sqs_with_kms_default_policy_document.json
+}
+
+data "aws_iam_policy_document" "sqs_with_kms_default_policy_document" {
+  version = "2012-10-17"
+  statement {
+    sid    = "SQS Permissions"
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+    actions = [
+      "sqs:AddPermission",
+      "sqs:ChangeMessageVisibility*",
+      "sqs:DeleteMessage*",
+      "sqs:Get*",
+      "sqs:List*",
+      "sqs:PurgeQueue",
+      "sqs:ReceiveMessage",
+      "sqs:RemovePermission",
+      "sqs:Send*",
+    ]
+    resources = ["${aws_sqs_queue.queue_with_kms[0].arn}"]
+  }
+}
+
+resource "aws_sqs_queue_policy" "sqs_with_redrive_default_policy" {
+  queue_url = "${aws_sqs_queue.queue_with_redrive[0].id}"
+  policy    = var.policy != "default" ? var.policy : data.aws_iam_policy_document.sqs_with_redrive_default_policy_document.json
+}
+
+data "aws_iam_policy_document" "sqs_with_redrive_default_policy_document" {
+  version = "2012-10-17"
+  statement {
+    sid    = "SQS Permissions"
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+    actions = [
+      "sqs:AddPermission",
+      "sqs:ChangeMessageVisibility*",
+      "sqs:DeleteMessage*",
+      "sqs:Get*",
+      "sqs:List*",
+      "sqs:PurgeQueue",
+      "sqs:ReceiveMessage",
+      "sqs:RemovePermission",
+      "sqs:Send*",
+    ]
+    resources = [
+      var.redrive_arn,
+      aws_sqs_queue.queue_with_redrive[0].arn,
+    ]
+  }
+}
+
+resource "aws_sqs_queue_policy" "sqs_with_kms_and_redrive_default_policy" {
+  queue_url = "${aws_sqs_queue.queue_with_kms_and_redrive[0].id}"
+  policy    = var.policy != "default" ? var.policy : data.aws_iam_policy_document.sqs_with_kms_and_redrive_default_policy_document.json
+}
+
+data "aws_iam_policy_document" "sqs_with_kms_and_redrive_default_policy_document" {
+  version = "2012-10-17"
+  statement {
+    sid    = "SQS Permissions"
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+    actions = [
+      "sqs:AddPermission",
+      "sqs:ChangeMessageVisibility*",
+      "sqs:DeleteMessage*",
+      "sqs:Get*",
+      "sqs:List*",
+      "sqs:PurgeQueue",
+      "sqs:ReceiveMessage",
+      "sqs:RemovePermission",
+      "sqs:Send*",
+    ]
+    resources = [
+      var.redrive_arn,
+      aws_sqs_queue.queue_with_kms_and_redrive[0].arn,
     ]
   }
 }

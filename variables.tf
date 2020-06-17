@@ -20,7 +20,7 @@ variable "iam_user_policy_name" {
 }
 
 variable "policy" {
-  description = "The JSON policy for the SQS queue"
+  description = "The JSON policy for the SQS queue (uses a default policy if omitted)"
   default     = ""
 }
 
@@ -86,7 +86,7 @@ variable "max_receive_count" {
 
 variable "kms_key_policy" {
   description = "KMS key policy (uses a default policy if omitted)"
-  default     = ""
+  default     = "default"
 }
 
 variable "enable_set_attributes" {
