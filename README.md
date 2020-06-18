@@ -48,7 +48,7 @@ Module usage:
 | message_retention_seconds | The number of seconds Amazon SQS retains a message. Integer representing seconds, from 60 (1 minute) to 1209600 (14 days) | string | `345600` | no |
 | name | A descriptive name for the SQS instance | string | - | yes |
 | number_of_users | The number of user to generate credentials for | string | `1` | no |
-| policy | The JSON policy for the SQS queue | string | `` | no |
+| policy | The JSON policy for the SQS queue (uses a "default" when stated) | string | `` | no |
 | receive_wait_time_seconds | The time for which a ReceiveMessage call will wait for a message to arrive (long polling) before returning. An integer from 0 to 20 (seconds) | string | `0` | no |
 | redrive_arn | AWS ARN for the SQS redirect queue | string | `` | no |
 | sqs_iam_user | The name of the iam user assigned to the created sqs bucket | string | - | yes |
