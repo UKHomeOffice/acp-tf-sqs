@@ -20,8 +20,8 @@ variable "iam_user_policy_name" {
 }
 
 variable "policy" {
-  description = "The JSON policy for the SQS queue"
-  default     = ""
+  description = "The JSON policy for the SQS queue (uses a default policy if stated)"
+  default     = "default"
 }
 
 variable "tags" {
