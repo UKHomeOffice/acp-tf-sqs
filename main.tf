@@ -49,7 +49,7 @@ resource "aws_kms_key" "sqs_kms_key" {
   policy                  = var.kms_key_policy != "" ? var.kms_key_policy : null
 }
 
-resource "aws_kms_alias" "s3_bucket_kms_alias" {
+resource "aws_kms_alias" "sqs_kms_alias" {
   count = length(var.kms_alias) != 0 && (length(var.policy) == 0 || length(var.redrive_arn) == 0) ? 1 : 0
 
   name          = "alias/${var.kms_alias}"
@@ -63,7 +63,6 @@ resource "aws_sqs_queue" "queue" {
   visibility_timeout_seconds        = var.visibility_timeout_seconds
   message_retention_seconds         = var.message_retention_seconds
   max_message_size                  = var.max_message_size
-  policy                            = var.policy
   delay_seconds                     = var.delay_seconds
   receive_wait_time_seconds         = var.receive_wait_time_seconds
   fifo_queue                        = var.fifo_queue
@@ -91,7 +90,6 @@ resource "aws_sqs_queue" "queue_with_kms" {
   visibility_timeout_seconds        = var.visibility_timeout_seconds
   message_retention_seconds         = var.message_retention_seconds
   max_message_size                  = var.max_message_size
-  policy                            = var.policy
   delay_seconds                     = var.delay_seconds
   receive_wait_time_seconds         = var.receive_wait_time_seconds
   fifo_queue                        = var.fifo_queue
@@ -203,7 +201,6 @@ resource "aws_sqs_queue" "queue_with_redrive" {
   visibility_timeout_seconds        = var.visibility_timeout_seconds
   message_retention_seconds         = var.message_retention_seconds
   max_message_size                  = var.max_message_size
-  policy                            = var.policy
   delay_seconds                     = var.delay_seconds
   receive_wait_time_seconds         = var.receive_wait_time_seconds
   fifo_queue                        = var.fifo_queue
@@ -232,7 +229,6 @@ resource "aws_sqs_queue" "queue_with_kms_and_redrive" {
   visibility_timeout_seconds        = var.visibility_timeout_seconds
   message_retention_seconds         = var.message_retention_seconds
   max_message_size                  = var.max_message_size
-  policy                            = var.policy
   delay_seconds                     = var.delay_seconds
   receive_wait_time_seconds         = var.receive_wait_time_seconds
   fifo_queue                        = var.fifo_queue
@@ -506,5 +502,123 @@ data "aws_iam_policy_document" "sqs_with_kms_and_redrive_policy_document" {
       "kms:DescribeKey",
       "kms:Decrypt",
     ]
+  }
+}
+
+resource "aws_sqs_queue_policy" "sqs_policy" {
+  count     = length(var.kms_alias) == 0 && length(var.redrive_arn) == 0 && length(var.policy) != 0 ? 1 : 0
+  queue_url = aws_sqs_queue.queue[0].id
+  policy    = var.policy != "default" ? var.policy : data.aws_iam_policy_document.sqs_default_policy_document[0].json
+}
+
+data "aws_iam_policy_document" "sqs_default_policy_document" {
+  count   = length(var.kms_alias) == 0 && length(var.redrive_arn) == 0 && length(var.policy) != 0 ? 1 : 0
+  version = "2012-10-17"
+  statement {
+    sid    = "SQS Permissions"
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+    actions = [
+      "SQS:*"
+    ]
+    resources = [aws_sqs_queue.queue[0].arn]
+    condition {
+      test     = "ArnEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_sqs_queue.queue[0].arn]
+    }
+  }
+}
+
+resource "aws_sqs_queue_policy" "sqs_with_kms_policy" {
+  count     = length(var.kms_alias) != 0 && length(var.redrive_arn) == 0 && length(var.policy) != 0 ? 1 : 0
+  queue_url = aws_sqs_queue.queue_with_kms[0].id
+  policy    = var.policy != "default" ? var.policy : data.aws_iam_policy_document.sqs_with_kms_default_policy_document[0].json
+}
+
+data "aws_iam_policy_document" "sqs_with_kms_default_policy_document" {
+  count   = length(var.kms_alias) != 0 && length(var.redrive_arn) == 0 && length(var.policy) != 0 ? 1 : 0
+  version = "2012-10-17"
+  statement {
+    sid    = "SQS Permissions"
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+    actions = [
+      "SQS:*"
+    ]
+    resources = [aws_sqs_queue.queue_with_kms[0].arn]
+    condition {
+      test     = "ArnEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_sqs_queue.queue_with_kms[0].arn]
+    }
+  }
+}
+
+resource "aws_sqs_queue_policy" "sqs_with_redrive_policy" {
+  count     = length(var.kms_alias) == 0 && length(var.redrive_arn) != 0 && length(var.policy) != 0 ? 1 : 0
+  queue_url = aws_sqs_queue.queue_with_redrive[0].id
+  policy    = var.policy != "default" ? var.policy : data.aws_iam_policy_document.sqs_with_redrive_default_policy_document[0].json
+}
+
+data "aws_iam_policy_document" "sqs_with_redrive_default_policy_document" {
+  count   = length(var.kms_alias) == 0 && length(var.redrive_arn) != 0 && length(var.policy) != 0 ? 1 : 0
+  version = "2012-10-17"
+  statement {
+    sid    = "SQS Permissions"
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+    actions = [
+      "SQS:*"
+    ]
+    resources = [
+      var.redrive_arn,
+      aws_sqs_queue.queue_with_redrive[0].arn,
+    ]
+    condition {
+      test     = "ArnEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_sqs_queue.queue_with_redrive[0].arn]
+    }
+  }
+}
+
+resource "aws_sqs_queue_policy" "sqs_with_kms_and_redrive_policy" {
+  count     = length(var.kms_alias) != 0 && length(var.redrive_arn) != 0 && length(var.policy) != 0 ? 1 : 0
+  queue_url = aws_sqs_queue.queue_with_kms_and_redrive[0].id
+  policy    = var.policy != "default" ? var.policy : data.aws_iam_policy_document.sqs_with_kms_and_redrive_default_policy_document[0].json
+}
+
+data "aws_iam_policy_document" "sqs_with_kms_and_redrive_default_policy_document" {
+  count   = length(var.kms_alias) != 0 && length(var.redrive_arn) != 0 && length(var.policy) != 0 ? 1 : 0
+  version = "2012-10-17"
+  statement {
+    sid    = "SQS Permissions"
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+    actions = [
+      "SQS:*"
+    ]
+    resources = [
+      var.redrive_arn,
+      aws_sqs_queue.queue_with_kms_and_redrive[0].arn,
+    ]
+    condition {
+      test     = "ArnEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_sqs_queue.queue_with_kms_and_redrive[0].arn]
+    }
   }
 }
