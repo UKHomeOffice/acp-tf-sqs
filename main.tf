@@ -580,10 +580,7 @@ data "aws_iam_policy_document" "sqs_with_redrive_default_policy_document" {
     actions = [
       "SQS:*"
     ]
-    resources = [
-      var.redrive_arn,
-      aws_sqs_queue.queue_with_redrive[0].arn,
-    ]
+    resources = [aws_sqs_queue.queue_with_redrive[0].arn]
     condition {
       test     = "ArnEquals"
       variable = "aws:SourceArn"
@@ -611,10 +608,7 @@ data "aws_iam_policy_document" "sqs_with_kms_and_redrive_default_policy_document
     actions = [
       "SQS:*"
     ]
-    resources = [
-      var.redrive_arn,
-      aws_sqs_queue.queue_with_kms_and_redrive[0].arn,
-    ]
+    resources = [aws_sqs_queue.queue_with_kms_and_redrive[0].arn]
     condition {
       test     = "ArnEquals"
       variable = "aws:SourceArn"
