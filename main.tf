@@ -378,6 +378,30 @@ data "aws_iam_policy_document" "sqs_policy_document" {
       "sqs:Send*",
     ], var.enable_set_attributes ? ["sqs:SetQueueAttributes"] : [])
   }
+
+  # this is a deny policy so that it overrides the other policies
+  dynamic statement {
+    for_each = length(var.cidr_blocks) != 0 ? [1] : []
+
+    content {
+      sid    = "IAMSQSIPRestriction"
+      effect = "Deny"
+
+      resources = [
+        aws_sqs_queue.queue[0].arn,
+      ]
+
+      actions = [
+        "SQS:*"
+      ]
+
+      condition {
+        test     = "NotIpAddress"
+        variable = "aws:SourceIp"
+        values   = var.cidr_blocks
+      }
+    }
+  }
 }
 
 data "aws_iam_policy_document" "sqs_with_kms_policy_document" {
@@ -426,6 +450,30 @@ data "aws_iam_policy_document" "sqs_with_kms_policy_document" {
       "kms:Decrypt",
     ]
   }
+
+  # this is a deny policy so that it overrides the other policies
+  dynamic statement {
+    for_each = length(var.cidr_blocks) != 0 ? [1] : []
+
+    content {
+      sid    = "IAMSQSIPRestriction"
+      effect = "Deny"
+
+      resources = [
+        aws_sqs_queue.queue_with_kms[0].arn,
+      ]
+
+      actions = [
+        "SQS:*"
+      ]
+
+      condition {
+        test     = "NotIpAddress"
+        variable = "aws:SourceIp"
+        values   = var.cidr_blocks
+      }
+    }
+  }
 }
 
 data "aws_iam_policy_document" "sqs_with_redrive_policy_document" {
@@ -452,6 +500,30 @@ data "aws_iam_policy_document" "sqs_with_redrive_policy_document" {
       "sqs:RemovePermission",
       "sqs:Send*",
     ], var.enable_set_attributes ? ["sqs:SetQueueAttributes"] : [])
+  }
+
+  # this is a deny policy so that it overrides the other policies
+  dynamic statement {
+    for_each = length(var.cidr_blocks) != 0 ? [1] : []
+
+    content {
+      sid    = "IAMSQSIPRestriction"
+      effect = "Deny"
+
+      resources = [
+        aws_sqs_queue.queue_with_redrive[0].arn,
+      ]
+
+      actions = [
+        "SQS:*"
+      ]
+
+      condition {
+        test     = "NotIpAddress"
+        variable = "aws:SourceIp"
+        values   = var.cidr_blocks
+      }
+    }
   }
 }
 
@@ -502,6 +574,30 @@ data "aws_iam_policy_document" "sqs_with_kms_and_redrive_policy_document" {
       "kms:DescribeKey",
       "kms:Decrypt",
     ]
+  }
+
+  # this is a deny policy so that it overrides the other policies
+  dynamic statement {
+    for_each = length(var.cidr_blocks) != 0 ? [1] : []
+
+    content {
+      sid    = "IAMSQSIPRestriction"
+      effect = "Deny"
+
+      resources = [
+        aws_sqs_queue.queue_with_kms_and_redrive[0].arn,
+      ]
+
+      actions = [
+        "SQS:*"
+      ]
+
+      condition {
+        test     = "NotIpAddress"
+        variable = "aws:SourceIp"
+        values   = var.cidr_blocks
+      }
+    }
   }
 }
 
