@@ -98,3 +98,13 @@ variable "cidr_blocks" {
   description = "A list of network cidr blocks which are permitted access"
   default     = []
 }
+
+variable "email_addresses" {
+  description = "A list of email addresses for key rotation notifications."
+  default     = []
+}
+
+variable "key_rotation" {
+  description = "Enable email notifications for old IAM keys."
+  default     = "true"
+}
