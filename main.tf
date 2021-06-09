@@ -1,35 +1,34 @@
-/**
-* Module usage:
-*
-*      module "sqs" {
-*        source               = "git::https://github.com/UKHomeOffice/acp-tf-sqs?ref=master"
-*        name                 = "new-sqs"
-*        environment          = "env"
-*        sqs_iam_user         = "new-sqs-user"
-*        iam_user_policy_name = "new-sqs-policy"
-*
-*        policy = <<POLICY
-*      {
-*        "Version": "2012-10-17",
-*        "Id": "sqspolicy",
-*        "Statement": [
-*          {
-*            "Sid": "First",
-*            "Effect": "Allow",
-*            "Principal": "*",
-*            "Action": "sqs:SendMessage",
-*            "Resource": "arn:aws:sqs:*:*:new-sqs",
-*            "Condition": {
-*              "ArnEquals": {
-*                "aws:SourceArn": "arn:aws:sqs:*:*:new-sqs"
-*              }
-*            }
-*          }
-*        ]
-*      }
-*      POLICY
-*      }
+/*
+     module "sqs" {
+       source               = "git::https://github.com/UKHomeOffice/acp-tf-sqs?ref=master"
+       name                 = "new-sqs"
+       environment          = "env"
+       sqs_iam_user         = "new-sqs-user"
+       iam_user_policy_name = "new-sqs-policy"
+
+       policy = <<POLICY
+     {
+       "Version": "2012-10-17",
+       "Id": "sqspolicy",
+       "Statement": [
+         {
+           "Sid": "First",
+           "Effect": "Allow",
+           "Principal": "*",
+           "Action": "sqs:SendMessage",
+           "Resource": "arn:aws:sqs:*:*:new-sqs",
+           "Condition": {
+             "ArnEquals": {
+               "aws:SourceArn": "arn:aws:sqs:*:*:new-sqs"
+             }
+           }
+         }
+       ]
+     }
+     POLICY
+     }
 */
+
 terraform {
   required_version = ">= 0.12"
 }
@@ -38,6 +37,10 @@ data "aws_caller_identity" "current" {
 }
 
 data "aws_region" "current" {
+}
+
+locals {
+  email_tags = { for i, email in var.email_addresses : "email${i}" => email }
 }
 
 resource "aws_kms_key" "sqs_kms_key" {
@@ -313,6 +316,15 @@ resource "aws_iam_user" "sqs_iam_user" {
 
   name = "${var.sqs_iam_user}${var.number_of_users != 1 ? "-${count.index}" : ""}"
   path = "/"
+
+  tags = merge(
+    var.tags,
+    local.email_tags,
+    {
+      "key_rotation" = var.key_rotation
+    },
+  )
+
 }
 
 resource "aws_iam_user" "sqs_with_kms_iam_user" {
@@ -320,6 +332,15 @@ resource "aws_iam_user" "sqs_with_kms_iam_user" {
 
   name = "${var.sqs_iam_user}${var.number_of_users != 1 ? "-${count.index}" : ""}"
   path = "/"
+
+  tags = merge(
+    var.tags,
+    local.email_tags,
+    {
+      "key_rotation" = var.key_rotation
+    },
+  )
+
 }
 
 resource "aws_iam_user_policy" "sqs_user_policy" {
@@ -380,7 +401,7 @@ data "aws_iam_policy_document" "sqs_policy_document" {
   }
 
   # this is a deny policy so that it overrides the other policies
-  dynamic statement {
+  dynamic "statement" {
     for_each = length(var.cidr_blocks) != 0 ? [1] : []
 
     content {
@@ -452,7 +473,7 @@ data "aws_iam_policy_document" "sqs_with_kms_policy_document" {
   }
 
   # this is a deny policy so that it overrides the other policies
-  dynamic statement {
+  dynamic "statement" {
     for_each = length(var.cidr_blocks) != 0 ? [1] : []
 
     content {
@@ -503,7 +524,7 @@ data "aws_iam_policy_document" "sqs_with_redrive_policy_document" {
   }
 
   # this is a deny policy so that it overrides the other policies
-  dynamic statement {
+  dynamic "statement" {
     for_each = length(var.cidr_blocks) != 0 ? [1] : []
 
     content {
@@ -577,7 +598,7 @@ data "aws_iam_policy_document" "sqs_with_kms_and_redrive_policy_document" {
   }
 
   # this is a deny policy so that it overrides the other policies
-  dynamic statement {
+  dynamic "statement" {
     for_each = length(var.cidr_blocks) != 0 ? [1] : []
 
     content {
