@@ -733,3 +733,42 @@ data "aws_iam_policy_document" "sqs_with_kms_and_redrive_default_policy_document
     }
   }
 }
+
+data "aws_iam_policy_document" "access_key_policy_document" {
+  count = var.number_of_users
+
+  policy_id = "${var.sqs_iam_user}AccessKeyPolicy"
+
+  statement {
+    sid    = "ManageOwnIAMKeys"
+    effect = "Allow"
+
+    actions = [
+      "iam:CreateAccessKey",
+      "iam:DeleteAccessKey",
+      "iam:GetAccessKeyLastUsed",
+      "iam:GetUser",
+      "iam:ListAccessKeys",
+      "iam:UpdateAccessKey"
+    ]
+
+    resources = [
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${var.sqs_iam_user}${var.number_of_users != 1 ? "-${count.index}" : ""}"
+    ]
+  }
+}
+
+resource "aws_iam_policy" "access_keys_policy" {
+  count = var.number_of_users
+
+  name        = "${var.iam_user_policy_name}-AccessKeyPolicy-${count.index}"
+  policy      = data.aws_iam_policy_document.access_key_policy_document[count.index].json
+  description = "Policy to allow users to manage their own access keys"
+}
+
+resource "aws_iam_user_policy_attachment" "attach_access_key_policy" {
+  count = var.number_of_users
+
+  user       = length(var.kms_alias) == 0 ? aws_iam_user.sqs_iam_user[count.index].name : aws_iam_user.sqs_with_kms_iam_user[count.index].name
+  policy_arn = aws_iam_policy.access_keys_policy[count.index].arn
+}
