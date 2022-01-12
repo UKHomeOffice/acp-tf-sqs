@@ -32,21 +32,24 @@ Module usage:
 
 ```
 
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.12 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.71.0 |
 
 ## Modules
 
-No modules.
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_self_serve_access_keys"></a> [self\_serve\_access\_keys](#module\_self\_serve\_access\_keys) | git::https://github.com/UKHomeOffice/acp-tf-self-serve-access-keys | v0.1.0 |
 
 ## Resources
 
@@ -133,3 +136,4 @@ No modules.
 | <a name="output_sqs_id_no_policy"></a> [sqs\_id\_no\_policy](#output\_sqs\_id\_no\_policy) | The SQS KMS Queue ID we just created |
 | <a name="output_sqs_id_redrive"></a> [sqs\_id\_redrive](#output\_sqs\_id\_redrive) | The SQS KMS Queue ID we just created |
 | <a name="output_sqs_id_redrive_and_no_policy"></a> [sqs\_id\_redrive\_and\_no\_policy](#output\_sqs\_id\_redrive\_and\_no\_policy) | The SQS KMS Queue ID we just created |
+<!-- END_TF_DOCS -->
