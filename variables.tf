@@ -59,6 +59,16 @@ variable "fifo_queue" {
   default     = false
 }
 
+variable "deduplication_scope" {
+  description = "Specifies whether message deduplication occurs at the message group or queue level"
+  default     = "queue"
+}
+
+variable "fifo_throughput_limit" {
+  description = "Specifies whether the FIFO queue throughput quota applies to the entire queue or per message group"
+  default     = "perQueue"
+}
+
 variable "content_based_deduplication" {
   description = "Enables content-based deduplication for FIFO queues"
   default     = false
