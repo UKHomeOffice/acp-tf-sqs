@@ -107,7 +107,7 @@ resource "aws_sqs_queue" "queue_with_kms" {
   deduplication_scope               = var.deduplication_scope
   fifo_throughput_limit             = var.fifo_throughput_limit
   content_based_deduplication       = var.content_based_deduplication
-  kms_master_key_id                 = length(var.kms_alias) != 0 ? aws_kms_key.sqs_kms_key[0].key_id: var.kms_existing_key
+  kms_master_key_id                 = length(var.kms_alias) != 0 ? aws_kms_key.sqs_kms_key[0].key_id : var.kms_existing_key
   kms_data_key_reuse_period_seconds = 300
 
   tags = merge(
@@ -336,7 +336,7 @@ resource "aws_sqs_queue" "queue_with_kms_and_redrive_and_no_policy" {
 }
 
 resource "aws_iam_user" "sqs_iam_user" {
-  count = length(var.policy) != 0 && length(var.kms_alias) == 0 && length(var.kms_existing_key) == 0  ? var.number_of_users : 0
+  count = length(var.policy) != 0 && length(var.kms_alias) == 0 && length(var.kms_existing_key) == 0 ? var.number_of_users : 0
 
   name = "${var.sqs_iam_user}${var.number_of_users != 1 ? "-${count.index}" : ""}"
   path = "/"
