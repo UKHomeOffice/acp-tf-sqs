@@ -380,7 +380,7 @@ resource "aws_iam_user_policy" "sqs_with_kms_user_policy" {
 
   name   = "${var.iam_user_policy_name}SQSPolicy"
   user   = element(aws_iam_user.sqs_with_kms_iam_user.*.name, count.index)
-  policy = var.kms_alias != "" ? data.aws_iam_policy_document.sqs_with_kms_policy_document[0].json: data.aws_iam_policy_document.sqs_with_existing_kms_policy_document[0].json
+  policy = var.kms_alias != "" ? data.aws_iam_policy_document.sqs_with_kms_policy_document[0].json : data.aws_iam_policy_document.sqs_with_existing_kms_policy_document[0].json
 }
 
 resource "aws_iam_user_policy" "sqs_with_redrive_user_policy" {
