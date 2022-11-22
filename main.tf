@@ -75,8 +75,8 @@ resource "aws_sqs_queue" "queue" {
   delay_seconds                     = var.delay_seconds
   receive_wait_time_seconds         = var.receive_wait_time_seconds
   fifo_queue                        = var.fifo_queue
-  deduplication_scope               = var.deduplication_scope
-  fifo_throughput_limit             = var.fifo_throughput_limit
+  deduplication_scope               = var.fifo_queue == true ? var.deduplication_scope : null
+  fifo_throughput_limit             = var.deduplication_scope != "" && var.fifo_queue == true ? var.fifo_throughput_limit : null
   content_based_deduplication       = var.content_based_deduplication
   kms_data_key_reuse_period_seconds = 300
 
@@ -104,8 +104,8 @@ resource "aws_sqs_queue" "queue_with_kms" {
   delay_seconds                     = var.delay_seconds
   receive_wait_time_seconds         = var.receive_wait_time_seconds
   fifo_queue                        = var.fifo_queue
-  deduplication_scope               = var.deduplication_scope
-  fifo_throughput_limit             = var.fifo_throughput_limit
+  deduplication_scope               = var.fifo_queue == true ? var.deduplication_scope : null
+  fifo_throughput_limit             = var.deduplication_scope != "" && var.fifo_queue == true ? var.fifo_throughput_limit : null
   content_based_deduplication       = var.content_based_deduplication
   kms_master_key_id                 = aws_kms_key.sqs_kms_key[0].key_id
   kms_data_key_reuse_period_seconds = 300
@@ -133,9 +133,9 @@ resource "aws_sqs_queue" "queue_with_no_policy" {
   max_message_size                  = var.max_message_size
   delay_seconds                     = var.delay_seconds
   receive_wait_time_seconds         = var.receive_wait_time_seconds
-  fifo_queue                        = var.fifo_queue
-  deduplication_scope               = var.deduplication_scope
-  fifo_throughput_limit             = var.fifo_throughput_limit
+  fifo_queue                        = var.fifo_queue 
+  deduplication_scope               = var.fifo_queue == true ? var.deduplication_scope : null
+  fifo_throughput_limit             = var.deduplication_scope != "" && var.fifo_queue == true ? var.fifo_throughput_limit : null
   content_based_deduplication       = var.content_based_deduplication
   kms_data_key_reuse_period_seconds = 300
 
@@ -163,8 +163,8 @@ resource "aws_sqs_queue" "queue_with_kms_key_and_no_policy" {
   delay_seconds                     = var.delay_seconds
   receive_wait_time_seconds         = var.receive_wait_time_seconds
   fifo_queue                        = var.fifo_queue
-  deduplication_scope               = var.deduplication_scope
-  fifo_throughput_limit             = var.fifo_throughput_limit
+  deduplication_scope               = var.fifo_queue == true ? var.deduplication_scope : null
+  fifo_throughput_limit             = var.deduplication_scope != "" && var.fifo_queue == true ? var.fifo_throughput_limit : null
   content_based_deduplication       = var.content_based_deduplication
   kms_master_key_id                 = var.kms_key
   kms_data_key_reuse_period_seconds = 300
@@ -193,8 +193,8 @@ resource "aws_sqs_queue" "queue_with_kms_and_no_policy" {
   delay_seconds                     = var.delay_seconds
   receive_wait_time_seconds         = var.receive_wait_time_seconds
   fifo_queue                        = var.fifo_queue
-  deduplication_scope               = var.deduplication_scope
-  fifo_throughput_limit             = var.fifo_throughput_limit
+  deduplication_scope               = var.fifo_queue == true ? var.deduplication_scope : null
+  fifo_throughput_limit             = var.deduplication_scope != "" && var.fifo_queue == true ? var.fifo_throughput_limit : null
   content_based_deduplication       = var.content_based_deduplication
   kms_master_key_id                 = aws_kms_key.sqs_kms_key[0].key_id
   kms_data_key_reuse_period_seconds = 300
@@ -223,8 +223,8 @@ resource "aws_sqs_queue" "queue_with_redrive" {
   delay_seconds                     = var.delay_seconds
   receive_wait_time_seconds         = var.receive_wait_time_seconds
   fifo_queue                        = var.fifo_queue
-  deduplication_scope               = var.deduplication_scope
-  fifo_throughput_limit             = var.fifo_throughput_limit
+  deduplication_scope               = var.fifo_queue == true ? var.deduplication_scope : null
+  fifo_throughput_limit             = var.deduplication_scope != "" && var.fifo_queue == true ? var.fifo_throughput_limit : null
   content_based_deduplication       = var.content_based_deduplication
   kms_data_key_reuse_period_seconds = 300
   redrive_policy                    = "{\"deadLetterTargetArn\":\"${var.redrive_arn}\",\"maxReceiveCount\":${var.max_receive_count}}"
@@ -253,8 +253,8 @@ resource "aws_sqs_queue" "queue_with_kms_and_redrive" {
   delay_seconds                     = var.delay_seconds
   receive_wait_time_seconds         = var.receive_wait_time_seconds
   fifo_queue                        = var.fifo_queue
-  deduplication_scope               = var.deduplication_scope
-  fifo_throughput_limit             = var.fifo_throughput_limit
+  deduplication_scope               = var.fifo_queue == true ? var.deduplication_scope : null
+  fifo_throughput_limit             = var.deduplication_scope != "" && var.fifo_queue == true ? var.fifo_throughput_limit : null
   content_based_deduplication       = var.content_based_deduplication
   kms_master_key_id                 = var.kms_key
   kms_data_key_reuse_period_seconds = 300
@@ -284,8 +284,8 @@ resource "aws_sqs_queue" "queue_with_redrive_and_no_policy" {
   delay_seconds                     = var.delay_seconds
   receive_wait_time_seconds         = var.receive_wait_time_seconds
   fifo_queue                        = var.fifo_queue
-  deduplication_scope               = var.deduplication_scope
-  fifo_throughput_limit             = var.fifo_throughput_limit
+  deduplication_scope               = var.fifo_queue == true ? var.deduplication_scope : null
+  fifo_throughput_limit             = var.deduplication_scope != "" && var.fifo_queue == true ? var.fifo_throughput_limit : null
   content_based_deduplication       = var.content_based_deduplication
   kms_data_key_reuse_period_seconds = 300
   redrive_policy                    = "{\"deadLetterTargetArn\":\"${var.redrive_arn}\",\"maxReceiveCount\":${var.max_receive_count}}"
@@ -314,8 +314,8 @@ resource "aws_sqs_queue" "queue_with_kms_and_redrive_and_no_policy" {
   delay_seconds                     = var.delay_seconds
   receive_wait_time_seconds         = var.receive_wait_time_seconds
   fifo_queue                        = var.fifo_queue
-  deduplication_scope               = var.deduplication_scope
-  fifo_throughput_limit             = var.fifo_throughput_limit
+  deduplication_scope               = var.fifo_queue == true ? var.deduplication_scope : null
+  fifo_throughput_limit             = var.deduplication_scope != "" && var.fifo_queue == true ? var.fifo_throughput_limit : null
   content_based_deduplication       = var.content_based_deduplication
   kms_master_key_id                 = aws_kms_key.sqs_kms_key[0].key_id
   kms_data_key_reuse_period_seconds = 300
@@ -763,3 +763,4 @@ module "self_serve_access_keys" {
 
   user_names = concat(aws_iam_user.sqs_iam_user.*.name, aws_iam_user.sqs_with_kms_iam_user.*.name)
 }
+
