@@ -653,7 +653,7 @@ resource "aws_sqs_queue_policy" "sqs_policy" {
 }
 
 data "aws_iam_policy_document" "sqs_default_policy_document" {
-  count   = length(var.kms_alias) == 0 && length(var.kms_key) && length(var.redrive_arn) == 0 && length(var.policy) != 0 ? 1 : 0
+  count   = length(var.kms_alias) == 0 && length(var.kms_key) == 0 && length(var.redrive_arn) == 0 && length(var.policy) != 0 ? 1 : 0
   version = "2012-10-17"
   statement {
     sid    = "SQS Permissions"
