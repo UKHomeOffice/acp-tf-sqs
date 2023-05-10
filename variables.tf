@@ -84,6 +84,11 @@ variable "kms_key" {
   default     = ""
 }
 
+variable "kms_existing_key" {
+  description = "KMS key ID name for SQS when using an existing KMS key"
+  default     = ""
+}
+
 variable "redrive_arn" {
   description = "AWS ARN for the SQS redirect queue"
   default     = ""
