@@ -78,6 +78,7 @@ resource "aws_sqs_queue" "queue" {
   deduplication_scope               = var.fifo_queue == true ? var.deduplication_scope : null
   fifo_throughput_limit             = var.deduplication_scope != "" && var.fifo_queue == true ? var.fifo_throughput_limit : null
   content_based_deduplication       = var.content_based_deduplication
+  kms_master_key_id                 = var.kms_key != "" ? var.kms_key : null
   kms_data_key_reuse_period_seconds = 300
 
   tags = merge(
